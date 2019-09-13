@@ -22,7 +22,7 @@ case $(uname) in
         echo "Der feine Herr :-D" 
         ;;
     *)
-    echo "wrong OS"
+    echo "wrongπ OS"
     exit 1
 esac
 
