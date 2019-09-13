@@ -18,6 +18,9 @@ case $(uname) in
     Linux)
         IPv6=`ip -6 a | grep 2003 | awk '{print $2}'| sed 's/\/64//g'`
         PREFIX=`ip -6 r s | grep 2003 | head -1 | awk '{print $1}' | sed 's/::\/64//g'`;;
+    Darwin)
+        echo "Der feine Herr :-D" 
+        ;;
     *)
     echo "wrong OS"
     exit 1
