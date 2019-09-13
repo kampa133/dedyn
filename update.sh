@@ -1,7 +1,9 @@
 #!/usr/local/bin/bash
 # set to 1 to debug
 DEBUG="0"
-# read vars conf file is one line domainname and token
+# read vars conf file is:
+# DOMAIN=xxx.dedyn.io
+# TOKEN=123456789123456789
 DIR=~/git/dedyn.io
 CONF=$DIR/update.conf
 # set vars
