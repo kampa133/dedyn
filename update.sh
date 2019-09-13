@@ -31,6 +31,7 @@ if [[ $DEBUG == "1" ]]; then
     echo "FQDN="$FQDN
 else
     # if domain exists:
+    # need to flush DNS cache before
     host "$FQDN"
     if [[ $? -eq 0 ]]; then
         AAAA=`host $FQDN | awk '{print $5}'`
