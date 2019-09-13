@@ -31,7 +31,6 @@ if [[ $DEBUG == "1" ]]; then
     echo "FQDN="$FQDN
 else
     # if domain exists:
-    echo "hh"
     host "$FQDN"
     if [[ $? -eq 0 ]]; then
         AAAA=`host $FQDN | awk '{print $5}'`
@@ -43,7 +42,7 @@ else
         fi
     else
         # create/register subdomain
-        curl -X POST https://desec.io/api/v1/domains/$DOMAIN/rrsets/ --header "Authorization: Token $TOKEN" --header "Content-Type: application/json" --data @- <<< '{"subname": "$HOSTNAME", "type": "AAAA", "ttl": 3600, "records": ["${IPv6}"]}'
+        curl -X POST https://desec.io/api/v1/domains/$DOMAIN/rrsets/ --header "Authorization: Token $TOKEN" --header "Content-Type: application/json" --data @- <<< '{"subname": "'$HOSTNAME'", "type": "AAAA", "ttl": 3600, "records": ["'$IPv6'"]}'
     fi
 fi
 
