@@ -14,15 +14,19 @@ FQDN="$HOSTNAME"."$DOMAIN"
 case $(uname) in
     FreeBSD)
         IPv6=`ifconfig | grep 2003 | awk '{print $2}'`
-        PREFIX=`ndp -p | grep 2003 | awk '{print $1}' | sed 's/::\/64//g'`;;
+        PREFIX=`ndp -p | grep 2003 | awk '{print $1}' | sed 's/::\/64//g'`
+        
+        ;;
     Linux)
         IPv6=`ip -6 a | grep 2003 | awk '{print $2}'| sed 's/\/64//g'`
-        PREFIX=`ip -6 r s | grep 2003 | head -1 | awk '{print $1}' | sed 's/::\/64//g'`;;
+        PREFIX=`ip -6 r s | grep 2003 | head -1 | awk '{print $1}' | sed 's/::\/64//g'`
+        ;;
     Darwin)
-        echo "Der feine Herr :-D" 
+        echo "Der feine Herr :-D"
+        exit 1
         ;;
     *)
-    echo "wrongπ OS"
+    echo "OS not supported"
     exit 1
 esac
 
