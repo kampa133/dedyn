@@ -1,6 +1,6 @@
 #!/usr/local/bin/bash
 # set to 1 to debug
-DEBUG="1"
+DEBUG="0"
 # read vars conf file is:
 # DOMAIN=xxx.dedyn.io
 # TOKEN=123456789123456789
@@ -15,7 +15,7 @@ case $(uname) in
     FreeBSD)
         IPv6=`ifconfig | grep 2003 | awk '{print $2}'`
         PREFIX=`ndp -p | grep 2003 | awk '{print $1}' | sed 's/::\/64//g'`
-        
+
         ;;
     Linux)
         IPv6=`ip -6 a | grep 2003 | awk '{print $2}'| sed 's/\/64//g'`
