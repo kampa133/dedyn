@@ -18,8 +18,8 @@ case $(uname) in
 
         ;;
     Linux)
-        IPv6=`ip -6 a | grep 2003 | awk '{print $2}'| sed 's/\/64//g'`
-        PREFIX=`ip -6 r s | grep 2003 | head -1 | awk '{print $1}' | sed 's/::\/64//g'`
+        IPv6=`ip -6 a | grep inet6 | awk '{print $2}'| grep '^2' | sed 's/\/64//g'`
+        PREFIX=`ip -6 r s | grep '^2' | head -1 | awk '{print $1}' | sed 's/::\/64//g'`
         ;;
     Darwin)
         echo "Der feine Herr :-D"
