@@ -66,8 +66,8 @@ function_check_AAAA () {
     fi
 }
 function_check_A () {
-    host "$FQDN" #| grep -v IPv6
-    if [[ $? -eq 0 ]]; then
+    dig $FQDN +short
+        if [[ $? -eq 0 ]]; then
         IPv4=`curl https://checkipv4.dedyn.io/`
         A=`host $FQDN | grep -v IPv6 | awk '{print $4}'`
         if [[ $IPv4 == $A ]];then
