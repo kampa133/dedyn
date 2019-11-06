@@ -59,22 +59,23 @@ function_check_AAAA () {
             echo "OK!"
             exit 1
          else
-            echo "update"
+            echo "update6"
         fi
     else
-        echo "create"
+        echo "create6"
     fi
 }
 function_check_A () {
     currentA=`dig $FQDN +short`
     if [ -z "$currentA" ];then
-        echo "create"
+        echo "create4"
+        function_create_A
     else
     IPv4=`curl https://checkipv4.dedyn.io/`
     if [[ $IPv4 == $currentA ]];then
             echo "OK"
         else
-            echo "update"
+            echo "update4"
             A=$IPv4
         fi
     fi
@@ -95,6 +96,9 @@ if [ -n "$1" ]; then
     fi
     if [ $1 = d ];then
         echo "dualstack"
+        function_get_IPv6
+        function_check_AAAA
+        function_check_A
         exit 1
     else
         echo "Variables are 4 6 or d"
