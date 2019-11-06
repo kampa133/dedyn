@@ -66,17 +66,17 @@ function_check_AAAA () {
     fi
 }
 function_check_A () {
-    dig $FQDN +short
-        if [[ $? -eq 0 ]]; then
-        IPv4=`curl https://checkipv4.dedyn.io/`
-        A=`host $FQDN | grep -v IPv6 | awk '{print $4}'`
-        if [[ $IPv4 == $A ]];then
+    currentA=`dig $FQDN +short`
+    if [ -z "$currentA" ];then
+        echo "create"
+    else
+    IPv4=`curl https://checkipv4.dedyn.io/`
+    if [[ $IPv4 == $currentA ]];then
             echo "OK"
         else
             echo "update"
+            A=$IPv4
         fi
-    else
-    echo "create"
     fi
     }
 
