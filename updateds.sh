@@ -46,8 +46,8 @@ else
     # need to flush DNS cache before
     host "$FQDN"
     if [[ $? -eq 0 ]]; then
-        AAAA=`host $FQDN | awk '{print $5}'`
-        if [[ $AAAA == *"$PREFIX"* ]]; then
+        AAAA=`host $FQDN | grep IPv6 | awk '{print $5}'`
+            if [[ $AAAA == *"$PREFIX"* ]]; then
             exit 1
         else
             # update subdomain
@@ -57,6 +57,7 @@ else
     else
         # create/register subdomain
         curl -X POST https://desec.io/api/v1/domains/$DOMAIN/rrsets/ --header "Authorization: Token $TOKEN" --header "Content-Type: application/json" --data @- <<< '{"subname": "'$HOSTNAME'", "type": "AAAA", "ttl": 3600, "records": ["'$IPv6'"]}'
+        curl -X POST https://desec.io/api/v1/domains/$DOMAIN/rrsets/ --header "Authorization: Token $TOKEN" --header "Content-Type: application/json" --data @- <<< '{"subname": "'$HOSTNAME'", "type": "A", "ttl": 3600, "records": ["'$IPv4'"]}'
     fi
 fi
 
