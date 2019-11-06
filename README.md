@@ -15,6 +15,6 @@
 ## todo
 - merge both script
 - vars to check $1
-   - 4 only A
+  - 4 only A
   - 6 only AAAA
   - d both
