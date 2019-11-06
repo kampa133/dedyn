@@ -11,27 +11,28 @@ CONF=$DIR/update.conf
 source $CONF
 HOSTNAME=`hostname`
 FQDN="$HOSTNAME"."$DOMAIN"
-function_vars () {
-    if [ -n "$1" ]; then
-        if [ $1 = 4 ];then
-            echo "IPv4 only"
-            exit 1
-        fi
-        if [ $1 = 6 ];then
-            echo "IPv6 only"
-            exit 1
-        fi
-        if [ $1 = d ];then
-            echo "dualstack"
-            exit 1
-        else
-            echo "Variables are 4 6 or d"
-            exit 0
-        fi
-    else
-        echo "First parameter not supplied."
+if [ -n "$1" ]; then
+    if [ $1 = 4 ];then
+        echo "IPv4 only"
         exit 1
     fi
+    if [ $1 = 6 ];then
+        echo "IPv6 only"
+        function_get_IPv6
+        function_check_AAAA 
+        exit 1
+    fi
+    if [ $1 = d ];then
+        echo "dualstack"
+        exit 1
+    else
+        echo "Variables are 4 6 or d"
+        exit 0
+    fi
+else
+    echo "First parameter not supplied."
+    exit 1
+fi
 }
 function_get_IPv6 () {
     case $(uname) in
@@ -52,6 +53,41 @@ function_get_IPv6 () {
         exit 1
     esac
 }
+
+function_update_A () {
+    IPv4=`curl https://checkipv4.dedyn.io/`
+    curl -X PATCH https://desec.io/api/v1/domains/$DOMAIN/rrsets/$HOSTNAME/A/ --header "Authorization: Token $TOKEN" --header "Content-Type: application/json" --data @- <<< '{"subname": "'$HOSTNAME'", "type": "A", "ttl": 3600, "records": ["'$IPv4'"]}'
+}
+
+function_update_AAAA () {
+        curl -X PATCH https://desec.io/api/v1/domains/$DOMAIN/rrsets/$HOSTNAME/AAAA/ --header "Authorization: Token $TOKEN" --header "Content-Type: application/json" --data @- <<< '{"subname": "'$HOSTNAME'", "type": "AAAA", "ttl": 3600, "records": ["'$IPv6'"]}'
+
+}
+
+function_create_AAAA () {
+    curl -X POST https://desec.io/api/v1/domains/$DOMAIN/rrsets/ --header "Authorization: Token $TOKEN" --header "Content-Type: application/json" --data @- <<< '{"subname": "'$HOSTNAME'", "type": "AAAA", "ttl": 3600, "records": ["'$IPv6'"]}'
+}
+
+function_create_A () {
+    IPv4=`curl https://checkipv4.dedyn.io/`
+    curl -X POST https://desec.io/api/v1/domains/$DOMAIN/rrsets/ --header "Authorization: Token $TOKEN" --header "Content-Type: application/json" --data @- <<< '{"subname": "'$HOSTNAME'", "type": "A", "ttl": 3600, "records": ["'$IPv4'"]}'
+}
+
+function_check_AAAA () {
+    host "$FQDN"
+    if [[ $? -eq 0 ]]; then
+        AAAA=`host $FQDN | grep IPv6 | awk '{print $5}'`
+        if [[ $AAAA == *"$PREFIX"* ]]; then
+            echo "OK!"
+            exit 1
+         else
+            echo "update"
+        fi
+    else
+        echo "create"
+    fi
+}
+
 # if [[ $DEBUG == "1" ]]; then
 #     #detect public IPv4
 #     IPv4=`curl https://checkipv4.dedyn.io/`
@@ -72,19 +108,13 @@ function_get_IPv6 () {
 #             if [[ $AAAA == *"$PREFIX"* ]]; then
 #             exit 1
 #         else
-#             #detect public IPv4
-#             IPv4=`curl https://checkipv4.dedyn.io/`
-#             # update subdomain
-#             curl -X PATCH https://desec.io/api/v1/domains/$DOMAIN/rrsets/$HOSTNAME/AAAA/ --header "Authorization: Token $TOKEN" --header "Content-Type: application/json" --data @- <<< '{"subname": "'$HOSTNAME'", "type": "AAAA", "ttl": 3600, "records": ["'$IPv6'"]}'
-#             curl -X PATCH https://desec.io/api/v1/domains/$DOMAIN/rrsets/$HOSTNAME/A/ --header "Authorization: Token $TOKEN" --header "Content-Type: application/json" --data @- <<< '{"subname": "'$HOSTNAME'", "type": "A", "ttl": 3600, "records": ["'$IPv4'"]}'
+#             
 #         fi
 #     else
 #         #detect public IPv4
 #         IPv4=`curl https://checkipv4.dedyn.io/`
 #         # create/register subdomain
-#         curl -X POST https://desec.io/api/v1/domains/$DOMAIN/rrsets/ --header "Authorization: Token $TOKEN" --header "Content-Type: application/json" --data @- <<< '{"subname": "'$HOSTNAME'", "type": "AAAA", "ttl": 3600, "records": ["'$IPv6'"]}'
+#
 #         curl -X POST https://desec.io/api/v1/domains/$DOMAIN/rrsets/ --header "Authorization: Token $TOKEN" --header "Content-Type: application/json" --data @- <<< '{"subname": "'$HOSTNAME'", "type": "A", "ttl": 3600, "records": ["'$IPv4'"]}'
 #     fi
 # fi
-
-function_vars $1
