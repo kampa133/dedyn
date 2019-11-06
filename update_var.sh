@@ -11,29 +11,7 @@ CONF=$DIR/update.conf
 source $CONF
 HOSTNAME=`hostname`
 FQDN="$HOSTNAME"."$DOMAIN"
-if [ -n "$1" ]; then
-    if [ $1 = 4 ];then
-        echo "IPv4 only"
-        exit 1
-    fi
-    if [ $1 = 6 ];then
-        echo "IPv6 only"
-        function_get_IPv6
-        function_check_AAAA 
-        exit 1
-    fi
-    if [ $1 = d ];then
-        echo "dualstack"
-        exit 1
-    else
-        echo "Variables are 4 6 or d"
-        exit 0
-    fi
-else
-    echo "First parameter not supplied."
-    exit 1
-fi
-}
+### define functions ###
 function_get_IPv6 () {
     case $(uname) in
         FreeBSD)
@@ -74,7 +52,7 @@ function_create_A () {
 }
 
 function_check_AAAA () {
-    host "$FQDN"
+    host "$FQDN" | grep IPv6
     if [[ $? -eq 0 ]]; then
         AAAA=`host $FQDN | grep IPv6 | awk '{print $5}'`
         if [[ $AAAA == *"$PREFIX"* ]]; then
@@ -86,6 +64,46 @@ function_check_AAAA () {
     else
         echo "create"
     fi
+}
+function_check_A () {
+    host "$FQDN" #| grep -v IPv6
+    if [[ $? -eq 0 ]]; then
+        IPv4=`curl https://checkipv4.dedyn.io/`
+        A=`host $FQDN | grep -v IPv6 | awk '{print $4}'`
+        if [[ $IPv4 == $A ]];then
+            echo "OK"
+        else
+            echo "update"
+        fi
+    else
+    echo "create"
+    fi
+    }
+
+### define functions ###
+if [ -n "$1" ]; then
+    if [ $1 = 4 ];then
+        echo "IPv4 only"
+        function_check_A
+        exit 1
+    fi
+    if [ $1 = 6 ];then
+        echo "IPv6 only"
+        function_get_IPv6
+        function_check_AAAA 
+        exit 1
+    fi
+    if [ $1 = d ];then
+        echo "dualstack"
+        exit 1
+    else
+        echo "Variables are 4 6 or d"
+        exit 0
+    fi
+else
+    echo "First parameter not supplied."
+    exit 1
+fi
 }
 
 # if [[ $DEBUG == "1" ]]; then
