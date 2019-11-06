@@ -30,9 +30,10 @@ case $(uname) in
     echo "OS not supported"
     exit 1
 esac
-#detect public IPv4
-IPv4=`curl https://checkipv4.dedyn.io/`
+
 if [[ $DEBUG == "1" ]]; then
+    #detect public IPv4
+    IPv4=`curl https://checkipv4.dedyn.io/`
     echo "DEBUG"
     echo "CONF="$CONF
     echo "DOMAIN="$DOMAIN
@@ -50,11 +51,15 @@ else
             if [[ $AAAA == *"$PREFIX"* ]]; then
             exit 1
         else
+            #detect public IPv4
+            IPv4=`curl https://checkipv4.dedyn.io/`
             # update subdomain
             curl -X PATCH https://desec.io/api/v1/domains/$DOMAIN/rrsets/$HOSTNAME/AAAA/ --header "Authorization: Token $TOKEN" --header "Content-Type: application/json" --data @- <<< '{"subname": "'$HOSTNAME'", "type": "AAAA", "ttl": 3600, "records": ["'$IPv6'"]}'
             curl -X PATCH https://desec.io/api/v1/domains/$DOMAIN/rrsets/$HOSTNAME/A/ --header "Authorization: Token $TOKEN" --header "Content-Type: application/json" --data @- <<< '{"subname": "'$HOSTNAME'", "type": "A", "ttl": 3600, "records": ["'$IPv4'"]}'
         fi
     else
+        #detect public IPv4
+        IPv4=`curl https://checkipv4.dedyn.io/`
         # create/register subdomain
         curl -X POST https://desec.io/api/v1/domains/$DOMAIN/rrsets/ --header "Authorization: Token $TOKEN" --header "Content-Type: application/json" --data @- <<< '{"subname": "'$HOSTNAME'", "type": "AAAA", "ttl": 3600, "records": ["'$IPv6'"]}'
         curl -X POST https://desec.io/api/v1/domains/$DOMAIN/rrsets/ --header "Authorization: Token $TOKEN" --header "Content-Type: application/json" --data @- <<< '{"subname": "'$HOSTNAME'", "type": "A", "ttl": 3600, "records": ["'$IPv4'"]}'
