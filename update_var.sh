@@ -56,7 +56,7 @@ function_check_AAAA () {
     if [[ $? -eq 0 ]]; then
         AAAA=`host $FQDN | grep IPv6 | awk '{print $5}'`
         if [[ $AAAA == *"$PREFIX"* ]]; then
-            echo "OK!"
+            echo "OK6"
             exit 1
          else
             echo "update6"
