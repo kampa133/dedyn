@@ -99,8 +99,13 @@ if [ -n "$1" ]; then
         function_check_AAAA
         function_check_A
         exit 1
+    fi
+    if [ $1 = X ];then
+        echo "delete"
+        curl -X PATCH https://desec.io/api/v1/domains/$DOMAIN/rrsets/$HOSTNAME/AAAA/ --header "Authorization: Token $TOKEN" --header "Content-Type: application/json" --data @- <<< '{"subname": "'$HOSTNAME'", "type": "AAAA", "ttl": 3600, "records": []}'
+        curl -X PATCH https://desec.io/api/v1/domains/$DOMAIN/rrsets/$HOSTNAME/A/ --header "Authorization: Token $TOKEN" --header "Content-Type: application/json" --data @- <<< '{"subname": "'$HOSTNAME'", "type": "A", "ttl": 3600, "records": []}'
     else
-        echo "Variables are 4 6 or d"
+        echo "Variables are 4 6 (d)ualstack oder X delete"
         exit 0
     fi
 else
@@ -121,21 +126,13 @@ fi
 #     echo "IPv4="$IPv4
 #     echo "FQDN="$FQDN
 # else
-#     # if domain exists:
-#     # need to flush DNS cache before
-#     host "$FQDN"
-#     if [[ $? -eq 0 ]]; then
-#         AAAA=`host $FQDN | grep IPv6 | awk '{print $5}'`
-#             if [[ $AAAA == *"$PREFIX"* ]]; then
-#             exit 1
-#         else
-#             
-#         fi
-#     else
-#         #detect public IPv4
-#         IPv4=`curl https://checkipv4.dedyn.io/`
-#         # create/register subdomain
-#
-#         curl -X POST https://desec.io/api/v1/domains/$DOMAIN/rrsets/ --header "Authorization: Token $TOKEN" --header "Content-Type: application/json" --data @- <<< '{"subname": "'$HOSTNAME'", "type": "A", "ttl": 3600, "records": ["'$IPv4'"]}'
-#     fi
-# fi
+
+### delete records
+# curl -X PATCH https://desec.io/api/v1/domains/:name/rrsets/ \
+#     --header "Authorization: Token {token}" \
+#     --header "Content-Type: application/json" --data @- <<EOF
+#     [
+#       {"subname": "www", "type": "A", "ttl": 3600, "records": ["1.2.3.4"]},
+#       {"subname": "www", "type": "AAAA", "records": []}
+#     ]
+# EOF
