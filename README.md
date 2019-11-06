@@ -13,7 +13,7 @@
    - update
  
 ## todo
-- merge both script
+- merge both scripts (update_var.sh)
 - vars to check $1
   - 4 only A
   - 6 only AAAA
