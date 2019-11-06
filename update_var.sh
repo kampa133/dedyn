@@ -73,7 +73,7 @@ function_check_A () {
     else
     IPv4=`curl https://checkipv4.dedyn.io/`
     if [[ $IPv4 == $currentA ]];then
-            echo "OK"
+            echo "OK4"
         else
             echo "update4"
             A=$IPv4
