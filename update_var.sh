@@ -114,7 +114,7 @@ if [ -n "$1" ]; then
         exit 1
     fi
     if [ $1 = X ];then
-        echo "delete"
+        echo "delete: just set localhost adresses"
         curl -X PATCH https://desec.io/api/v1/domains/$DOMAIN/rrsets/$HOSTNAME/AAAA/ --header "Authorization: Token $TOKEN" --header "Content-Type: application/json" --data @- <<< '{"subname": "'$HOSTNAME'", "type": "AAAA", "ttl": 3600, "records": ["::1"]}'
         curl -X PATCH https://desec.io/api/v1/domains/$DOMAIN/rrsets/$HOSTNAME/A/ --header "Authorization: Token $TOKEN" --header "Content-Type: application/json" --data @- <<< '{"subname": "'$HOSTNAME'", "type": "A", "ttl": 3600, "records": ["127.0.0.1"]}'
     else
@@ -125,7 +125,6 @@ else
     echo "First parameter not supplied."
     exit 1
 fi
-}
 
 # if [[ $DEBUG == "1" ]]; then
 #     #detect public IPv4
