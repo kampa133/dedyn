@@ -1,6 +1,7 @@
 # dedyn
 ## prerequisites
 - curl
+- dig
 - hostname should not contain FQDN
 ## what does it do
 - detects IPv6 adress and prefix

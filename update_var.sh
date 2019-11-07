@@ -1,7 +1,5 @@
 #!/usr/local/bin/bash
-#this is used to update A *and* AAAA records
-# set to 1 to debug
-DEBUG="0"
+# this is used to create,update or delete A *and* AAAA records
 # read vars conf file is:
 # DOMAIN=xxx.dedyn.io
 # TOKEN=123456789123456789
@@ -14,7 +12,11 @@ FQDN="$HOSTNAME"."$DOMAIN"
 ### define functions ###
 function_check_executables () {
     if ! [ -x "$(command -v dig)" ]; then
+        echo "freebsd: pkg install bind-tools"
         echo 'Error: dig is not installed.' >&2
+    fi
+    if ! [ -x "$(command -v curl)" ]; then
+        echo 'Error: curl is not installed.' >&2
         exit 1
     fi
 }
@@ -59,10 +61,8 @@ function_create_A () {
 }
 
 function_check_AAAA () {
-    #host "$FQDN" | grep IPv6
     dig AAAA $FQDN +short
     if [[ $? -eq 0 ]]; then
-        #AAAA=`host $FQDN | grep IPv6 | awk '{print $5}'`
         AAAA=`dig AAAA $FQDN +short`
         if [[ $AAAA == *"$PREFIX"* ]]; then
             echo "OK6"
@@ -139,13 +139,3 @@ fi
 #     echo "IPv4="$IPv4
 #     echo "FQDN="$FQDN
 # else
-
-### delete records
-# curl -X PATCH https://desec.io/api/v1/domains/:name/rrsets/ \
-#     --header "Authorization: Token {token}" \
-#     --header "Content-Type: application/json" --data @- <<EOF
-#     [
-#       {"subname": "www", "type": "A", "ttl": 3600, "records": ["1.2.3.4"]},
-#       {"subname": "www", "type": "AAAA", "records": []}
-#     ]
-# EOF
