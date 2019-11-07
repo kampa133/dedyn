@@ -87,7 +87,6 @@ function_check_A () {
         else
             echo "update4"
             function_update_A
-            A=$IPv4
         fi
     fi
     }
