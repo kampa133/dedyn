@@ -12,6 +12,13 @@ source $CONF
 HOSTNAME=`hostname`
 FQDN="$HOSTNAME"."$DOMAIN"
 ### define functions ###
+function_check_executables () {
+    if ! [ -x "$(command -v dig)" ]; then
+        echo 'Error: dig is not installed.' >&2
+        exit 1
+    fi
+}
+
 function_get_IPv6 () {
     case $(uname) in
         FreeBSD)
@@ -52,16 +59,20 @@ function_create_A () {
 }
 
 function_check_AAAA () {
-    host "$FQDN" | grep IPv6
+    #host "$FQDN" | grep IPv6
+    dig AAAA $FQDN +short
     if [[ $? -eq 0 ]]; then
-        AAAA=`host $FQDN | grep IPv6 | awk '{print $5}'`
+        #AAAA=`host $FQDN | grep IPv6 | awk '{print $5}'`
+        AAAA=`dig AAAA $FQDN +short`
         if [[ $AAAA == *"$PREFIX"* ]]; then
             echo "OK6"
         else
             echo "update6"
+            function_update_AAAA
         fi
     else
         echo "create6"
+        function_create_AAAA
     fi
 }
 function_check_A () {
@@ -75,12 +86,14 @@ function_check_A () {
             echo "OK4"
         else
             echo "update4"
+            function_update_A
             A=$IPv4
         fi
     fi
     }
 
 ### define functions ###
+function_check_executables
 if [ -n "$1" ]; then
     if [ $1 = 4 ];then
         echo "IPv4 only"
