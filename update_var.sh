@@ -47,11 +47,12 @@ function_update_A () {
 
 function_update_AAAA () {
     curl -X PATCH https://desec.io/api/v1/domains/$DOMAIN/rrsets/$HOSTNAME/AAAA/ --header "Authorization: Token $TOKEN" --header "Content-Type: application/json" --data @- <<< '{"subname": "'$HOSTNAME'", "type": "AAAA", "ttl": 3600, "records": ["'$IPv6'"]}'
-
+    printf "\n"
 }
 
 function_create_AAAA () {
     curl -X POST https://desec.io/api/v1/domains/$DOMAIN/rrsets/ --header "Authorization: Token $TOKEN" --header "Content-Type: application/json" --data @- <<< '{"subname": "'$HOSTNAME'", "type": "AAAA", "ttl": 3600, "records": ["'$IPv6'"]}'
+    printf "\n"
 }
 
 function_create_A () {
@@ -59,6 +60,7 @@ function_create_A () {
 }
 
 function_check_AAAA () {
+    #change like function_check_A
     dig AAAA $FQDN +short
     if [[ $? -eq 0 ]]; then
         AAAA=`dig AAAA $FQDN +short`
