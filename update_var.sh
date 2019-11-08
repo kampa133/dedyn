@@ -42,12 +42,11 @@ function_get_IPv6 () {
 }
 
 function_update_A () {
-    IPv4=`curl https://checkipv4.dedyn.io/`
     curl -X PATCH https://desec.io/api/v1/domains/$DOMAIN/rrsets/$HOSTNAME/A/ --header "Authorization: Token $TOKEN" --header "Content-Type: application/json" --data @- <<< '{"subname": "'$HOSTNAME'", "type": "A", "ttl": 3600, "records": ["'$IPv4'"]}'
 }
 
 function_update_AAAA () {
-        curl -X PATCH https://desec.io/api/v1/domains/$DOMAIN/rrsets/$HOSTNAME/AAAA/ --header "Authorization: Token $TOKEN" --header "Content-Type: application/json" --data @- <<< '{"subname": "'$HOSTNAME'", "type": "AAAA", "ttl": 3600, "records": ["'$IPv6'"]}'
+    curl -X PATCH https://desec.io/api/v1/domains/$DOMAIN/rrsets/$HOSTNAME/AAAA/ --header "Authorization: Token $TOKEN" --header "Content-Type: application/json" --data @- <<< '{"subname": "'$HOSTNAME'", "type": "AAAA", "ttl": 3600, "records": ["'$IPv6'"]}'
 
 }
 
@@ -56,7 +55,6 @@ function_create_AAAA () {
 }
 
 function_create_A () {
-    IPv4=`curl https://checkipv4.dedyn.io/`
     curl -X POST https://desec.io/api/v1/domains/$DOMAIN/rrsets/ --header "Authorization: Token $TOKEN" --header "Content-Type: application/json" --data @- <<< '{"subname": "'$HOSTNAME'", "type": "A", "ttl": 3600, "records": ["'$IPv4'"]}'
 }
 
@@ -65,27 +63,29 @@ function_check_AAAA () {
     if [[ $? -eq 0 ]]; then
         AAAA=`dig AAAA $FQDN +short`
         if [[ $AAAA == *"$PREFIX"* ]]; then
-            echo "OK6"
+           return 0
+           #echo "OK6"
         else
-            echo "update6"
+        #   echo "update6"
             function_update_AAAA
         fi
     else
-        echo "create6"
+        #echo "create6"
         function_create_AAAA
     fi
 }
 function_check_A () {
+    IPv4=`curl -s https://checkipv4.dedyn.io/`
     currentA=`dig $FQDN +short`
     if [ -z "$currentA" ];then
-        echo "create4"
+        #echo "create4"
         function_create_A
     else
-    IPv4=`curl https://checkipv4.dedyn.io/`
-    if [[ $IPv4 == $currentA ]];then
-            echo "OK4"
+        if [[ $IPv4 == $currentA ]];then
+            return 0
+            #echo "OK4"
         else
-            echo "update4"
+        #       echo "update4"
             function_update_A
         fi
     fi
@@ -95,18 +95,18 @@ function_check_A () {
 function_check_executables
 if [ -n "$1" ]; then
     if [ $1 = 4 ];then
-        echo "IPv4 only"
+        #echo "IPv4 only"
         function_check_A
         exit 1
     fi
     if [ $1 = 6 ];then
-        echo "IPv6 only"
+        #echo "IPv6 only"
         function_get_IPv6
         function_check_AAAA 
         exit 1
     fi
     if [ $1 = d ];then
-        echo "dualstack"
+        #echo "dualstack"
         function_get_IPv6
         function_check_AAAA
         function_check_A
