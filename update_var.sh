@@ -15,6 +15,7 @@ function_check_executables () {
         echo "freebsd: pkg install bind-tools"
         echo "debian: apt install dnsutils"
         echo 'Error: dig is not installed.' >&2
+        exit 1
     fi
     if ! [ -x "$(command -v curl)" ]; then
         echo 'Error: curl is not installed.' >&2
