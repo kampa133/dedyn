@@ -13,6 +13,7 @@ FQDN="$HOSTNAME"."$DOMAIN"
 function_check_executables () {
     if ! [ -x "$(command -v dig)" ]; then
         echo "freebsd: pkg install bind-tools"
+        echo "debian: apt install dnsutils"
         echo 'Error: dig is not installed.' >&2
     fi
     if ! [ -x "$(command -v curl)" ]; then
