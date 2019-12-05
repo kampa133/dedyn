@@ -6,16 +6,8 @@
 ## what does it do
 - detects IPv6 adress and prefix
 - detects public IPv4 
-- if subdomain is not registered on dedyn.io:
-  - registration of AAAA (A only updateds.sh [dualstack])
-- if is registered:
-  - check if existing AAAA record matches current prefix
-  - no match
-   - update
- 
+- creates, updates and deletes A and AAAA records (delete = setting loopback adresses)
+- updates only if neccessary
 ## todo
-- merge both scripts (update_var.sh)
-- vars to check $1
-  - 4 only A
-  - 6 only AAAA
-  - d both
+- real deletion
+- function_check_AAAA () could be better
