@@ -9,7 +9,9 @@ CONF=$DIR/update.conf
 source $CONF
 HOSTNAME=`hostname`
 FQDN="$HOSTNAME"."$DOMAIN"
-### define functions ###
+
+
+### start define functions ###
 function_check_executables () {
     if ! [ -x "$(command -v dig)" ]; then
         echo "freebsd: pkg install bind-tools"
@@ -94,10 +96,11 @@ function_check_A () {
         fi
     fi
     }
+### end define functions ###
 
-### define functions ###
+
 function_check_executables
-if [ -n "$1" ]; then
+if [ -n "$1" ]; then #not empty
     if [ $1 = 4 ];then
         #echo "IPv4 only"
         function_check_A
@@ -121,7 +124,7 @@ if [ -n "$1" ]; then
         curl -X PATCH https://desec.io/api/v1/domains/$DOMAIN/rrsets/$HOSTNAME/AAAA/ --header "Authorization: Token $TOKEN" --header "Content-Type: application/json" --data @- <<< '{"subname": "'$HOSTNAME'", "type": "AAAA", "ttl": 3600, "records": ["::1"]}'
         curl -X PATCH https://desec.io/api/v1/domains/$DOMAIN/rrsets/$HOSTNAME/A/ --header "Authorization: Token $TOKEN" --header "Content-Type: application/json" --data @- <<< '{"subname": "'$HOSTNAME'", "type": "A", "ttl": 3600, "records": ["127.0.0.1"]}'
     else
-        echo "Variables are 4 6 (d)ualstack oder X delete"
+        echo "Variables are 4 6 (d)ualstack or X delete"
         exit 0
     fi
 else
