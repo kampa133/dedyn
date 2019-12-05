@@ -1,4 +1,6 @@
 #!/usr/local/bin/bash
+### script is obsolete
+exit
 # set to 1 to debug
 DEBUG="0"
 # read vars conf file is:

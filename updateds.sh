@@ -1,4 +1,6 @@
 #!/usr/local/bin/bash
+### script is obsolete
+exit
 #this is used to update A *and* AAAA records
 # set to 1 to debug
 DEBUG="0"
