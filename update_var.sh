@@ -28,8 +28,8 @@ function_check_executables () {
 function_get_IPv6 () {
     case $(uname) in
         FreeBSD)
-            IPv6=`ifconfig | grep 2003 | awk '{print $2}'`
-            PREFIX=`ndp -p | grep 2003 | awk '{print $1}' | sed 's/::\/64//g'`
+            IPv6=`ifconfig | grep inet6 | awk '{print $2}' | grep '^2'`
+            PREFIX=`ndp -p | grep '^2' | awk '{print $1}' | sed 's/::\/64//g'`
             ;;
         Linux)
             IPv6=`ip -6 a | grep inet6 | awk '{print $2}'| grep '^2' | sed 's/\/64//g'`
