@@ -120,9 +120,10 @@ if [ -n "$1" ]; then #not empty
         exit 1
     fi
     if [ $1 = s ];then
-        SSHFP= 'ssh-keygen -r sid | awk '{print $6}''
-        echo $SSHFP
-        #curl -X POST https://desec.io/api/v1/domains/$DOMAIN/rrsets/ --header "Authorization: Token $TOKEN" --header "Content-Type: application/json" --data @- <<< '{"subname": "'$HOSTNAME'", "type": "SSHFP", "ttl": 3600, "records": ["'$SSHFP'"]}'
+        SSHFP=`ssh-keygen -r sid | awk '{print $6}' | sed -n '6 p'`
+        # 6. ECDSA SHA256
+        #echo $SSHFP
+        curl -X POST https://desec.io/api/v1/domains/$DOMAIN/rrsets/ --header "Authorization: Token $TOKEN" --header "Content-Type: application/json" --data @- <<< '{"subname": "'$HOSTNAME'", "type": "SSHFP", "ttl": 3600, "records": ["'$SSHFP'"]}'
         exit 1
     fi
     if [ $1 = X ];then
