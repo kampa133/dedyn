@@ -8,6 +8,7 @@
 - detects public IPv4 
 - creates, updates and deletes A and AAAA records (delete = setting loopback adresses)
 - updates only if neccessary
+- option for SSHFP
 ## todo
 - real deletion
 - function_check_AAAA () could be better
