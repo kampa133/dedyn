@@ -67,6 +67,8 @@ function_check_AAAA () {
     #change like function_check_A
     dig AAAA $FQDN +short
     if [[ $? -eq 0 ]]; then
+         function_create_AAAA
+    else
         AAAA=`dig AAAA $FQDN +short`
         if [[ $AAAA == *"$PREFIX"* ]]; then
            return 0
@@ -75,9 +77,6 @@ function_check_AAAA () {
         #   echo "update6"
             function_update_AAAA
         fi
-    else
-        #echo "create6"
-        function_create_AAAA
     fi
 }
 function_check_A () {
