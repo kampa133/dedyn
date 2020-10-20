@@ -66,7 +66,7 @@ function_create_A () {
 function_check_AAAA () {
     #change like function_check_A
     host $FQDN 
-    if [[ $? -eq 0 ]]; then
+    if [[ $? -ne 0 ]]; then
          function_create_AAAA
     else
         AAAA=`dig AAAA $FQDN +short`
