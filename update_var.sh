@@ -65,7 +65,7 @@ function_create_A () {
 
 function_check_AAAA () {
     #change like function_check_A
-    host AAAA $FQDN 
+    host $FQDN 
     if [[ $? -eq 0 ]]; then
          function_create_AAAA
     else
