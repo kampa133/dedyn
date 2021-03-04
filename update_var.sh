@@ -7,7 +7,7 @@ DIR=~/git/dedyn
 CONF=$DIR/update.conf
 # set vars
 source $CONF
-HOSTNAME=`hostname`
+HOSTNAME=`hostname | awk -F. '{print $1}'| tr [:upper:] [:lower:]`
 FQDN="$HOSTNAME"."$DOMAIN"
 
 
@@ -36,8 +36,10 @@ function_get_IPv6 () {
             PREFIX=`ip -6 r s | grep '^2' | head -1 | awk '{print $1}' | sed 's/::\/64//g'`
             ;;
         Darwin)
-            echo "Der feine Herr :-D"
-            exit 1
+            # echo "Der feine Herr :-D"
+            # exit 1
+            IPv6=`ifconfig | grep inet6 | grep secured | grep -v deprecated | awk '{print $2}' | grep '^2'`
+            PREFIX=`ndp -p | grep '^2' | awk '{print $1}' | sed 's/::\/64//g'`
             ;;
         *)
         echo "OS not supported"
