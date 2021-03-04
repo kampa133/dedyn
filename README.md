@@ -4,10 +4,11 @@
 
 - curl
 - dig
-- hostname should not contain FQDN
+- hostname
 
 ## what does it do
 
+- get hostname from fqdn and convert to lowercase
 - detects IPv6 adress and prefix
 - detects public IPv4 
 - creates, updates and deletes A and AAAA records (delete = setting loopback adresses)
